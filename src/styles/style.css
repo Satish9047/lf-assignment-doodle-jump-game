@@ -11,6 +11,7 @@ body{
 }
 .canvas{
     border: 5px solid black;
-    width: 600px;
-    height: 600px;
+    width: 320px;
+    height: 512px;
+    background-image: url("../image/bck.png");
 }

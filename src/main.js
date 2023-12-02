@@ -10,6 +10,9 @@ let doodleX = canvasWidth / 2 - doodleWidth / 2;
 let doodleY = canvasHeight * 7 / 8 - doodleHeight;
 
 let velocityX = 0;
+let velocityY = 0;
+let initialVelocityY = -8
+let gravity =0.3;
 
 // Doodle object
 let doodle = {
@@ -42,8 +45,8 @@ window.onload = function () {
     let doodleRightImg = new Image();
     doodleRightImg.src = "../src/image/doodlestein-right@2x.png";
 
-    let doodleLeftImg = new Image();
-    doodleRightImg.src = "../src/image/doodlestein-left@2x.png";
+    // let doodleLeftImg = new Image();
+    // doodleLeftImg.src = "../src/image/doodlestein-left@2x.png";
 
     platformImg = new Image();
     platformImg.src = "../src/image/platform.png";
@@ -60,7 +63,8 @@ window.onload = function () {
         ctx.drawImage(doodle.img, doodle.x, doodle.y, doodle.width, doodle.height);
     };
 
-    placePlatforms();
+    velocityY = initialVelocityY;
+    placePlatform();
     requestAnimationFrame(update)
     document.addEventListener("keydown", moveDoodle);
 
@@ -79,8 +83,16 @@ function update(){
     else if(doodle.x + doodle.width <0){
         doodle.x = canvasWidth;
     }
+
+    velocityY += gravity;
+    doodle.y += velocityY;
     doodle.x += velocityX;
     ctx.drawImage(doodle.img, doodle.x, doodle.y, doodle.width, doodle.height);
+}
+
+for (let i = 0; i < platformArray.length; i++){
+    let platform = platformArray[i];
+    ctx.drawImage(platform.img, platform.x, platform.y, platform.width, platform.height)
 }
 
 function moveDoodle(e){
@@ -99,7 +111,7 @@ function placePlatform(){
 
     let platform = {
        x: canvasWidth/2,
-       y: canvasHeight -50,
+       y: canvasHeight - 50,
         width: platformWidth,
         height: platformHeight,
         img: platformImg,

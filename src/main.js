@@ -48,17 +48,17 @@ window.onload = function () {
 
     // Load image
     doodleRightImg = new Image();
-    doodleRightImg.src = "./src/image/doodlestein-right@2x.png";
+    doodleRightImg.src = "../src/image/doodlestein-right@2x.png";
     doodle.img = doodleRightImg;
     doodleRightImg.onload = function () {
         ctx.drawImage(doodle.img, doodle.x, doodle.y, doodle.width, doodle.height);
     };
 
     doodleLeftImg = new Image();
-    doodleLeftImg.src = "./src/image/doodlestein-left@2x.png";
+    doodleLeftImg.src = "../src/image/doodlestein-left@2x.png";
 
     platformImg = new Image();
-    platformImg.src = "./src/image/platform.png";
+    platformImg.src = "../src/image/platform.png";
 
     velocityY = initialVelocityY;
     placePlatform();
@@ -104,7 +104,7 @@ function update() {
     // Update score
     updateScore();
     ctx.fillStyle = "black";
-    ctx.font = "16px san-sarif";
+    ctx.font = "16px sans-serif";
     ctx.fillText(score, 10, 20);
 
     // Update the position of doodle and velocity
@@ -156,10 +156,10 @@ function placePlatform() {
 // Movement functionality
 function moveDoodle(e) {
     console.log(e.code);
-    if (e.code == "ArrowRight" || e.code == "keyD") {
+    if (e.code == "ArrowRight" || e.code == "KeyD") {
         velocityX = 4;
         doodle.img = doodleRightImg;
-    } else if (e.code == "ArrowLeft" || e.code == "keyA") {
+    } else if (e.code == "ArrowLeft" || e.code == "KeyA") {
         velocityX = -4;
         doodle.img = doodleLeftImg;
     } else if (e.code == "Space" && gameOver) {

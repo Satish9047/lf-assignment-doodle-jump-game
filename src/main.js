@@ -25,6 +25,8 @@ let doodle = {
     width: doodleWidth,
     height: doodleHeight
 };
+let doodleRightImg;
+let doodleLeftImg;
 
 //platform 
 let platformArray = [];
@@ -34,7 +36,10 @@ let platformImg;
 
 //countScore
 let score = 0;
+let maxScore = 0;
 
+//game over check
+let gameOver = false;
 
 window.onload = function () {
     canvas = document.getElementById("canvas");
@@ -42,51 +47,48 @@ window.onload = function () {
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
-    // Draw a green rectangle
-    // ctx.fillStyle = "green";
-    // ctx.fillRect(doodle.x, doodle.y, doodle.width, doodle.height);
-
+    
     // Load image
-    let doodleRightImg = new Image();
+    doodleRightImg = new Image();
     doodleRightImg.src = "../src/image/doodlestein-right@2x.png";
     doodle.img = doodleRightImg;
     doodleRightImg.onload = function(){
         ctx.drawImage(doodle.img, doodle.x, doodle.y, doodle.width, doodle.height);
     }
-    let doodleLeftImg = new Image();
+
+    doodleLeftImg = new Image();
     doodleLeftImg.src = "../src/image/doodlestein-left@2x.png";
     
     platformImg = new Image();
     platformImg.src = "../src/image/platform.png";
 
-   
-    
-
-    // Wait for the image to load
-    // doodleRightImg.onload = function () {
-    //     // // Clear the canvas
-    //     // ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    //     // Draw the image
-    //     ctx.drawImage(doodle.img, doodle.x, doodle.y, doodle.width, doodle.height);
-    // };
-
-    // doodleLeftImg = new Image();
-    // doodleLeftImg.src = "./doodler-left.png";
-    // doodle.img = doodleLeftImg;
 
     velocityY = initialVelocityY;
     placePlatform();
     requestAnimationFrame(update);
     document.addEventListener("keydown", moveDoodle);
-
 };
 
 function update(){
     //animating the doodle
-    requestAnimationFrame(update)
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    requestAnimationFrame(update);
+
+    if(gameOver){
+        return;
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
      
+
+
+    //teleport to opposite side ot wall
+    if(doodle.x > canvasWidth){
+        doodle.x = 0;
+
+    }
+    else if(doodle.x + doodle.width <0){
+        doodle.x = canvasWidth;
+    }
+
     //draw platform
     for (let i = 0; i < platformArray.length; i++){
         let platform = platformArray[i];
@@ -104,33 +106,38 @@ function update(){
         platformArray.shift(); //deleteing the platform that goes bottom of the screen
         newPlatform(); // add new platform on top
     }
+
     //update score
     updateScore();
     ctx.fillStyle = "black";
     ctx.font = "16px san-sarif";
     ctx.fillText(score, 10, 20);
 
-    //teleport to opposite side ot wall
-    if(doodle.x > canvasWidth){
-        doodle.x = 0;
-
-    }
-    else if(doodle.x + doodle.width <0){
-        doodle.x = canvasWidth;
-    }
     
 
-
+    
 
     //updating the position of doodle and velocity
+    
     velocityY += gravity;
     doodle.y += velocityY;
     doodle.x += velocityX;
     ctx.drawImage(doodle.img, doodle.x, doodle.y, doodle.width, doodle.height);
+
+    if(doodle.y > canvas.height){
+        gameOver=true;
+    }
+
+    if(gameOver){
+        ctx.fillText("Game Over", canvasWidth/7, canvasHeight*5/8);
+        ctx.fillText(`Your Score is ${score}`, canvasWidth/7, canvasHeight*6/8);
+        ctx.fillText("Press 'Space' to Restart", canvasWidth/7, canvasHeight*7/8)
+    } 
+
 }
 
 
-//adding the platform
+//adding the initial platform (static platcform)
 function placePlatform(){
     platformArray =[];
 
@@ -141,10 +148,10 @@ function placePlatform(){
         height: platformHeight,
         img: platformImg,
     }
-
     platformArray.push(platform);
+ 
 
-
+//for randomly generatingt the platforms
     for(let i= 0; i<6; i++){
         let randomX = Math.floor(Math.random() * canvasWidth*3/4); //(0-1)*canvasWidth
     
@@ -163,6 +170,7 @@ function placePlatform(){
 
 // movement funcationality
 function moveDoodle(e){
+    console.log(e.code);
     if(e.code == "ArrowRight" || e.code == "keyD"){
         velocityX = 4;
         doodle.img = doodleRightImg;
@@ -170,6 +178,20 @@ function moveDoodle(e){
     else if(e.code == "ArrowLeft" || e.code == "keyA"){
         velocityX =  -4;
         doodle.img = doodleLeftImg;
+    }else if(e.code == "Space" && gameOver){
+        // reset
+        doodle = {
+            x: doodleX,
+            y: doodleY,
+            img: doodleRightImg,
+            width: doodleWidth,
+            height: doodleHeight
+        };
+        velocityX = 0;
+        velocityY = initialVelocityY;
+        maxScore = 0;
+        gameOver=false;
+        placePlatform();
     }
 }
 
@@ -181,7 +203,7 @@ function detectCollision(a,b){
     a.y + a.height > b.y;
 }
 
-
+//for randomly generating the platform while scrolling upward
 function newPlatform(){
     let randomX = Math.floor(Math.random() * canvasWidth*3/4); //(0-1)*canvasWidth
     
@@ -196,9 +218,20 @@ function newPlatform(){
          platformArray.push(platform);
 }
 
+
+//updating scrore when the doodle reach new height
 function updateScore(){
     let points = Math.floor(2*Math.random());
-    score += points
+    
+    if (velocityY < 0){
+        maxScore += points;
+        if(score < maxScore){
+            score = maxScore;
+        }
+    } else if(velocityY >= 0){
+        maxScore -= points;
+    }
+    
 }
 
 

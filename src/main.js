@@ -50,15 +50,16 @@ window.onload = function () {
     doodleRightImg = new Image();
     doodleRightImg.src = "../src/image/doodlestein-right@2x.png";
     doodle.img = doodleRightImg;
-    doodleRightImg.onload = function () {
-        ctx.drawImage(doodle.img, doodle.x, doodle.y, doodle.width, doodle.height);
-    };
-
+    
     doodleLeftImg = new Image();
     doodleLeftImg.src = "../src/image/doodlestein-left@2x.png";
 
     platformImg = new Image();
     platformImg.src = "../src/image/platform.png";
+
+    doodleRightImg.onload = function () {
+        ctx.drawImage(doodle.img, doodle.x, doodle.y, doodle.width, doodle.height);
+    };
 
     velocityY = initialVelocityY;
     placePlatform();
@@ -169,11 +170,13 @@ function moveDoodle(e) {
             y: doodleY,
             img: doodleRightImg,
             width: doodleWidth,
-            height: doodleHeight
+            height: doodleHeight,
+            
         };
         velocityX = 0;
         velocityY = initialVelocityY;
         maxScore = 0;
+        score = 0;
         gameOver = false;
         placePlatform();
     }

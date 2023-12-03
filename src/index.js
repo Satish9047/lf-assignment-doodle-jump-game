@@ -50,17 +50,18 @@ window.onload = function () {
     
     // Load image
     doodleRightImg = new Image();
-    doodleRightImg.src = "../src/image/doodlestein-right@2x.png";
+    doodleRightImg.src = "https://username.github.io/repository/src/image/doodlestein-right@2x.png";
     doodle.img = doodleRightImg;
     doodleRightImg.onload = function(){
         ctx.drawImage(doodle.img, doodle.x, doodle.y, doodle.width, doodle.height);
     }
 
     doodleLeftImg = new Image();
-    doodleLeftImg.src = "../src/image/doodlestein-left@2x.png";
+    doodleLeftImg.src = "https://username.github.io/repository/src/image/doodlestein-left@2x.png";
+    ;
     
     platformImg = new Image();
-    platformImg.src = "../src/image/platform.png";
+    platformImg.src = "https://username.github.io/repository/src/image/platform.png";
 
 
     velocityY = initialVelocityY;

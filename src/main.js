@@ -14,7 +14,7 @@ let doodleY = canvasHeight * 7 / 8 - doodleHeight;
 //Defining velocity and gravity
 let velocityX = 0;
 let velocityY = 0;
-let initialVelocityY = -8;
+let initialVelocityY = -6;
 let gravity =0.3;
 
 // Doodle object
@@ -31,6 +31,9 @@ let platformArray = [];
 let platformWidth = 50;
 let platformHeight = 18;
 let platformImg;
+
+//countScore
+let score = 0;
 
 
 window.onload = function () {
@@ -87,11 +90,25 @@ function update(){
     //draw platform
     for (let i = 0; i < platformArray.length; i++){
         let platform = platformArray[i];
-        if(detectCollision(doodle, platform)){
+        if(velocityY <0 &&doodle.y < canvasHeight*3/4){
+            platform.y -= initialVelocityY; //slide platform down ward
+        }
+        if(detectCollision(doodle, platform)&&velocityY>=0){
             velocityY = initialVelocityY; //jump
         }
         ctx.drawImage(platform.img, platform.x, platform.y, platform.width, platform.height)
     }
+
+    //create new platform
+     while(platformArray.length > 0 && platformArray[0].y >= canvas.height){
+        platformArray.shift(); //deleteing the platform that goes bottom of the screen
+        newPlatform(); // add new platform on top
+    }
+    //update score
+    updateScore();
+    ctx.fillStyle = "black";
+    ctx.font = "16px san-sarif";
+    ctx.fillText(score, 10, 20);
 
     //teleport to opposite side ot wall
     if(doodle.x > canvasWidth){
@@ -101,8 +118,11 @@ function update(){
     else if(doodle.x + doodle.width <0){
         doodle.x = canvasWidth;
     }
+    
 
 
+
+    //updating the position of doodle and velocity
     velocityY += gravity;
     doodle.y += velocityY;
     doodle.x += velocityX;
@@ -123,6 +143,21 @@ function placePlatform(){
     }
 
     platformArray.push(platform);
+
+
+    for(let i= 0; i<6; i++){
+        let randomX = Math.floor(Math.random() * canvasWidth*3/4); //(0-1)*canvasWidth
+    
+        let platform = {
+            x: randomX,
+            y: canvasHeight - 75*i - 150,
+             width: platformWidth,
+             height: platformHeight,
+             img: platformImg,
+         }
+     
+         platformArray.push(platform);
+    }
 }
 
 
@@ -147,5 +182,23 @@ function detectCollision(a,b){
 }
 
 
+function newPlatform(){
+    let randomX = Math.floor(Math.random() * canvasWidth*3/4); //(0-1)*canvasWidth
+    
+        let platform = {
+            x: randomX,
+            y: -platformHeight,
+             width: platformWidth,
+             height: platformHeight,
+             img: platformImg,
+         }
+     
+         platformArray.push(platform);
+}
+
+function updateScore(){
+    let points = Math.floor(2*Math.random());
+    score += points
+}
 
 
